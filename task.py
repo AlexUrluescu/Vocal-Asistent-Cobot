@@ -1,15 +1,9 @@
 """Class that models the tasks the assistant can do"""
-
-from AppOpener import run
-from pynput.keyboard import Key, Controller
+from pynput.keyboard import Controller
 from time import sleep
 import os
 from pywinauto import Desktop
-import win32gui, win32com.client
-import pyautogui
-import requests
 import os.path
-from datetime import date, datetime
 import logging
 # from vocal_assistant import Assistent
 
@@ -19,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 class Task():
 
     def __init__(self, assistant_name):
-        self.task_list = [assistant_name, "hey", "mouse", "apple", "goodbye"]
+        self.task_list = [assistant_name, "hey", "car", "apple", "goodbye"]
         self.assistant_name = assistant_name
         self.keyboard = Controller()
 
@@ -42,8 +36,8 @@ class Task():
         # self.vocal_asistent.speak("Hey")
     
 
-    def test(self):
-        print("Mouse")
+    def car(self):
+        print("Car")
         # self.vocal_asistent.speak("Mouse")
 
     

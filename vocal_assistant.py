@@ -2,15 +2,12 @@
 from time import sleep
 import speech_recognition as sr
 import pyttsx3
-import os
-from pynput.keyboard import Key, Controller
-from AppOpener import run
 import task 
-from datetime import date, datetime
-import webbrowser
 import logging
 
 from pymodbus.client import ModbusTcpClient
+
+logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 
 # Adresa IP și portul serverului Modbus TCP/IP
 SERVER_IP = '192.168.0.40'
@@ -19,9 +16,7 @@ SERVER_PORT = 502
 # Creează un client Modbus TCP/IP
 client = ModbusTcpClient(SERVER_IP, SERVER_PORT)
 
-
-logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
-
+# cream clasa Asistent
 class Assistent():
     def __init__(self, name: str, gender: str, speech_speed: int = 100):
         self.name = name
@@ -31,9 +26,7 @@ class Assistent():
         # self.voice = self.engine_speak.getProperty('voices')
         # self.engine_speak.setProperty('voice', self.voice[1].id)
         self.engine_speak.setProperty('rate', self.speech_speed)
-        self.engine_keyboard = Controller()
         self.task_manager = task.Task(self.name.lower())
-        # self.task_weather_manager = weather.Weather(self.name.lower())
 
     
     def write(self, text):
@@ -61,7 +54,7 @@ class Assistent():
             except Exception as e:
                 print("Exception: " + str(e))
                 said = "Sorry, could not undersand you"
-                # self.speak("Sorry, could not undersand you")
+                self.speak("Sorry, could not undersand you")
 
         return said
     
@@ -76,90 +69,85 @@ class Assistent():
 
         
         if task_index == 1:
+            # cream conexiune
             client.connect()
 
-            # Scrierea unei valori în registrul de ieșire
+            # Scrierea unei valori în registrele robotului
             result = client.write_registers(address= 130, values= 1, unit=1)
-            if result.isError():
-                print('Eroare:', result)
-            else:
-                print('Valori scrise cu succes.')
+            done = client.write_registers(address=133, values=0, unit=1)
+            logging.debug(result)
+            logging.debug(done)
 
-            while(result == 0):
-                result = client.read_input_registers(address=134, count=1, unit=1)
-                if result.isError():
-                    print('Eroare:', result)
-                else:
-                    print('Valoare citită:', result.registers)
+            # citim valori din registrele robotului
+            done_cobot = client.read_input_registers(address=134, count=1, unit=1)
+
+            while(done_cobot == 0):
+                done_cobot = client.read_input_registers(address=134, count=1, unit=1)
 
 
+            done = client.write_registers(address=133, values=1, unit=1)
+
+            sleep(5)
+            self.task_manager.apple()
+            self.speak("I finish the task")
+
+            # inchidem conexiunea
             client.close()
-            
-
-            # here you will put the method ----------------------------
-            # self.task_manager.hei()
-
-
-            # ---------------------------------------------------------
 
         
         if task_index == 2:
 
+            # cream conexiune
             client.connect()
 
-            # Scrierea unei valori în registrul de ieșire
+            # Scrierea unei valori în registrele robotului
             result = client.write_registers(address= 130, values= 2, unit=1)
-            if result.isError():
-                print('Eroare:', result)
-            else:
-                print('Valori scrise cu succes.')
+            done = client.write_registers(address=133, values=0, unit=1)
 
-            while(result == 0):
-                result = client.read_input_registers(address=134, count=1, unit=1)
-                if result.isError():
-                    print('Eroare:', result)
-                else:
-                    print('Valoare citită:', result.registers)
+            # citim valori din registrele robotului
+            done_cobot = client.read_input_registers(address=134, count=1, unit=1)
 
+
+            while(done_cobot == 0):
+                done_cobot = client.read_input_registers(address=134, count=1, unit=1)
+
+            # citim valori din registrele robotului
+            done = client.write_registers(address=133, values=1, unit=1)
             
-            
+            sleep(5)
+            self.task_manager.apple()
+            self.speak("I finish the task")
+
+            # inchidem conexiunea
             client.close()
-
-            # here you will put the method ----------------------------
-            # self.task_manager.test()
-
-
-            # ---------------------------------------------------------
 
         
         if task_index == 3:
-            # client.connect()
 
-            # # Scrierea unei valori în registrul de ieșire
-            # result = client.write_registers(address= 130, values=3, unit=1)
-            # if result.isError():
-            #     print('Eroare:', result)
-            # else:
-            #     print('Valori scrise cu succes.')
+            # cream conexune
+            client.connect()
 
-            # while(result == 0):
-            #     result = client.read_input_registers(address=134, count=1, unit=1)
-            #     if result.isError():
-            #         print('Eroare:', result)
-            #     else:
-            #         print('Valoare citită:', result.registers)
+            # Scrierea unei valori în registrele robotului
+            result = client.write_registers(address= 130, values= 3, unit=1)
+            done = client.write_registers(address=133, values=0, unit=1)
+
+            # citim valori din registrele robotului
+            done_cobot = client.read_input_registers(address=134, count=1, unit=1)
 
 
-            
+            while(done_cobot == 0):
+                done_cobot = client.read_input_registers(address=134, count=1, unit=1)
+
+
+            done = client.write_registers(address=133, values=1, unit=1)
+
+            sleep(5)
+            self.task_manager.apple()
+            self.speak("I finish the task")
+
+            # inchidem conexiunea
             client.close()
 
-            # here you will put the method ----------------------------
-            self.task_manager.apple()
-            self.speak("Apple")
-
-
-
-            # ---------------------------------------------------------
 
         if task_index == 4:
             self.task_manager.goodbye()

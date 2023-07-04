@@ -1,19 +1,24 @@
+# import Clasa Asistent 
 from vocal_assistant import *
+
+# importam biblioteca logging pentru a printa in terminala
 import logging
 
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 
-x = Assistent("Helen", "female", 200)
+# Cream obiectul Asistent
+asistent = Assistent("Helen", "female", 200)
 
-x.speak(f"Hey there, my name is {x.get_name()}" )
+# Folosim metoda speak ca sa vorbeasca
+asistent.speak(f"Hey there, my name is {asistent.get_name()}" )
 
 sleep(0.5)
-x.speak(f"Just say, Hey {x.get_name()}, and I'll see what I can do for you.")
+asistent.speak(f"Just say, Hey {asistent.get_name()}, and I'll see what I can do for you.")
 
 task_class = 0
 
 while True:
-    text = x.get_audio().lower()
-    task_number = x.task_manager.identify_task(text)
+    text = asistent.get_audio().lower()
+    task_number = asistent.task_manager.identify_task(text)
     logging.debug(task_number)
-    x.run_task(task_number, text)
+    asistent.run_task(task_number, text)
