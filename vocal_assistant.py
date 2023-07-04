@@ -9,7 +9,7 @@ from pymodbus.client import ModbusTcpClient
 
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 
-# Adresa IP și portul serverului Modbus TCP/IP
+# Adresa IP și portul serverului Modbus TCP/IP (COMUNICARE COBOT)
 SERVER_IP = '192.168.0.40'
 SERVER_PORT = 502
 
@@ -30,19 +30,19 @@ class Assistent():
 
     
     def write(self, text):
-        """function that writes a text on the screen"""
+        """functie care scrie text pe ecran"""
         sleep(2)
         self.engine_keyboard.type(text)
 
 
     def speak(self, text: str) -> None:
-        """ Function that converts a text to speak """
+        """ Functie care converteste text in vorbire """
         self.engine_speak.say(text)
         self.engine_speak.runAndWait()
 
 
     def get_audio(self):
-        """Function that get the audio"""
+        """Functia care asculta folosind microfonul"""
         r = sr.Recognizer()
         with sr.Microphone() as source:
             audio = r.listen(source)
@@ -53,6 +53,7 @@ class Assistent():
                 logging.debug(said)
             except Exception as e:
                 print("Exception: " + str(e))
+                #exceptie cand nu reuseste sa inteleaga mesajul transmis
                 said = "Sorry, could not undersand you"
                 self.speak("Sorry, could not undersand you")
 
@@ -63,92 +64,53 @@ class Assistent():
         return self.name
     
 
+    def control_cobot(self, index_word):
+        # cream conexiune
+        client.connect()
+
+        # Scrierea unei valori în registrele robotului
+        result = client.write_registers(address = 130, values = index_word, unit = 1)
+        done = client.write_registers(address = 133, values = 0, unit = 1)
+        logging.debug(result)
+        logging.debug(done)
+
+        # citim valori din registrele robotului
+        done_cobot = client.read_input_registers(address = 134, count = 1, unit = 1)
+
+        while(done_cobot == 0):
+            done_cobot = client.read_input_registers(address = 134, count = 1, unit = 1)
+
+
+        done = client.write_registers(address = 133, value = 1, unit = 1)
+
+        sleep(5)
+        self.task_manager.apple()
+        self.speak(f"I finish the task {index_word}")
+
+        # inchidem conexiunea
+        client.close()
+
+
     def run_task(self, task_index, text):
         if task_index == 0:
             self.speak('What can I do for you?')
 
-        
+        # cLauza pentru cuvant si actiune a cobotului pe baza cuvantului 1
         if task_index == 1:
-            # cream conexiune
-            client.connect()
-
-            # Scrierea unei valori în registrele robotului
-            result = client.write_registers(address= 130, values= 1, unit=1)
-            done = client.write_registers(address=133, values=0, unit=1)
-            logging.debug(result)
-            logging.debug(done)
-
-            # citim valori din registrele robotului
-            done_cobot = client.read_input_registers(address=134, count=1, unit=1)
-
-            while(done_cobot == 0):
-                done_cobot = client.read_input_registers(address=134, count=1, unit=1)
+            self.control_cobot(1)
 
 
-            done = client.write_registers(address=133, values=1, unit=1)
-
-            sleep(5)
-            self.task_manager.apple()
-            self.speak("I finish the task")
-
-            # inchidem conexiunea
-            client.close()
-
-        
+        # cLauza pentru cuvant si actiune a cobotului pe baza cuvantului 2
         if task_index == 2:
-
-            # cream conexiune
-            client.connect()
-
-            # Scrierea unei valori în registrele robotului
-            result = client.write_registers(address= 130, values= 2, unit=1)
-            done = client.write_registers(address=133, values=0, unit=1)
-
-            # citim valori din registrele robotului
-            done_cobot = client.read_input_registers(address=134, count=1, unit=1)
+            self.control_cobot(2)
 
 
-            while(done_cobot == 0):
-                done_cobot = client.read_input_registers(address=134, count=1, unit=1)
-
-            # citim valori din registrele robotului
-            done = client.write_registers(address=133, values=1, unit=1)
-            
-            sleep(5)
-            self.task_manager.apple()
-            self.speak("I finish the task")
-
-            # inchidem conexiunea
-            client.close()
-
-        
+        # cLauza pentru cuvant si actiune a cobotului pe baza cuvantului 3
         if task_index == 3:
-
-            # cream conexune
-            client.connect()
-
-            # Scrierea unei valori în registrele robotului
-            result = client.write_registers(address= 130, values= 3, unit=1)
-            done = client.write_registers(address=133, values=0, unit=1)
-
-            # citim valori din registrele robotului
-            done_cobot = client.read_input_registers(address=134, count=1, unit=1)
+            self.control_cobot(3)
 
 
-            while(done_cobot == 0):
-                done_cobot = client.read_input_registers(address=134, count=1, unit=1)
-
-
-            done = client.write_registers(address=133, values=1, unit=1)
-
-            sleep(5)
-            self.task_manager.apple()
-            self.speak("I finish the task")
-
-            # inchidem conexiunea
-            client.close()
-
-
+        # cLauza pentru goodbye
         if task_index == 4:
             self.task_manager.goodbye()
             self.speak("Goodbye")

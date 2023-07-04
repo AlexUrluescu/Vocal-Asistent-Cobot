@@ -11,11 +11,10 @@ logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 
 
 class Task():
-
+    #setare cuvinte pentru actiunile cobotului 
     def __init__(self, assistant_name):
         self.task_list = [assistant_name, "hey", "car", "apple", "goodbye"]
         self.assistant_name = assistant_name
-        self.keyboard = Controller()
 
         # self.vocal_asistent = Assistent()
         
