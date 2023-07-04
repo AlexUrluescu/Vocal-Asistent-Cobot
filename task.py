@@ -29,22 +29,3 @@ class Task():
         
         return -127
 
-
-    def hei(self):
-        print("Hey")
-        # self.vocal_asistent.speak("Hey")
-    
-
-    def car(self):
-        print("Car")
-        # self.vocal_asistent.speak("Mouse")
-
-    
-    def apple(self):
-        print("Apple")
-        # self.vocal_asistent.speak("Apple")
-    
-
-    def goodbye(self):
-        print("Goodbye")
-        # self.vocal_asistent.speak("Goodbye")

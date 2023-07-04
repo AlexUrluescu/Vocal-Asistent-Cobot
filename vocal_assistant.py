@@ -84,7 +84,6 @@ class Assistent():
         done = client.write_registers(address = 133, value = 1, unit = 1)
 
         sleep(5)
-        self.task_manager.apple()
         self.speak(f"I finish the task {index_word}")
 
         # inchidem conexiunea
@@ -112,5 +111,4 @@ class Assistent():
 
         # cLauza pentru goodbye
         if task_index == 4:
-            self.task_manager.goodbye()
             self.speak("Goodbye")
